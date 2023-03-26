@@ -1,13 +1,12 @@
 const {
   createWriteStream,
-  writeFileSync,
-  unlinkSync,
   createReadStream,
-  statSync,
+  existsSync,
+  promises: { readdir, stat, unlink, mkdir, rm, rename },
 } = require('fs');
 const { join } = require('path');
 const { getType } = require('mime');
-const { v4: getUUID } = require('uuid');
+
 const config = require('../config');
 
 const { makeUploadFile } = require('./upload-file');
@@ -15,37 +14,64 @@ const { makeDeleteFile } = require('./delete-file');
 const { makeGetDownloadableFile } = require('./get-downloadable-file');
 const { makeGetFiles } = require('./get-files');
 const { makeStreamableVideo } = require('./streamable-video');
+const { makeCreateFolder } = require('./create-folder');
+const { makeDeleteFolder } = require('./delete-folder');
+const { makeRenameFolder } = require('./rename-folder');
+const { makeGetFolders } = require('./get-folders');
 
 module.exports = {
   uploadFileController: makeUploadFile({
     config,
     createWriteStream,
-    getUUID,
-    writeFileSync,
     join,
-    statSync,
   }),
   deleteFileController: makeDeleteFile({
     config,
-    unlinkSync,
-    writeFileSync,
     join,
+    unlink,
   }),
   getDownloadableFileController: makeGetDownloadableFile({
     config,
     createReadStream,
     getMimeType: getType,
     join,
-    statSync,
+    stat,
   }),
   getFiles: makeGetFiles({
     config,
+    join,
+    readdir,
+    stat,
   }),
   streamableVideoController: makeStreamableVideo({
     config,
     createReadStream,
     getMimeType: getType,
     join,
-    statSync,
+    // statSync,
+  }),
+  createFolderController: makeCreateFolder({
+    config,
+    existsSync,
+    join,
+    mkdir,
+  }),
+  deleteFolderController: makeDeleteFolder({
+    config,
+    existsSync,
+    join,
+    rm,
+  }),
+  renameFolderController: makeRenameFolder({
+    config,
+    existsSync,
+    join,
+    rename,
+  }),
+  getFoldersController: makeGetFolders({
+    config,
+    join,
+    readdir,
+    stat,
   }),
 };

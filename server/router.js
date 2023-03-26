@@ -5,15 +5,27 @@ const {
   getDownloadableFileController,
   getFiles,
   uploadFileController,
-  streamableVideoController,
+  createFolderController,
+  deleteFolderController,
+  renameFolderController,
+  getFoldersController,
 } = require('./controllers');
 
 module.exports = () => {
   const router = express.Router();
-  router.post('/upload', uploadFileController);
-  router.delete('/files/:fileId', deleteFileController);
-  router.get('/files/stream/:fileId', streamableVideoController);
-  router.get('/files/:fileId', getDownloadableFileController);
-  router.get('/files', getFiles);
+
+  router.post('/folders', createFolderController);
+  router.get('/folders', getFoldersController);
+  router.delete('/folders/:folderName', deleteFolderController);
+  router.put('/folders/:folderName', renameFolderController);
+
+  router.get('/folders/:folderName/files', getFiles);
+  router.post('/folders/:folderName/files', uploadFileController);
+  router.delete('/folders/:folderName/files/:fileName', deleteFileController);
+  router.get(
+    '/folders/:folderName/files/:fileName',
+    getDownloadableFileController
+  );
+
   return router;
 };

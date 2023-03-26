@@ -1,6 +1,7 @@
 module.exports.makeUploadFile =
-  ({ createWriteStream, getUUID, config, writeFileSync, join, statSync }) =>
+  ({ createWriteStream, config, join }) =>
   (req, res) => {
+    const { folderName } = req.params;
     req.pipe(req.busboy);
 
     req.busboy.on('file', (fieldName, incomingStream, file) => {
@@ -8,7 +9,7 @@ module.exports.makeUploadFile =
       console.log(`Uploading of ${file.filename} started`);
 
       const fileWriteStream = createWriteStream(
-        join(config.uploadPath,  file.filename)
+        join(config.uploadPath, folderName, file.filename)
       );
 
       incomingStream.pipe(fileWriteStream);
@@ -21,13 +22,6 @@ module.exports.makeUploadFile =
           } seconds`
         );
         res.send('Uploaded Successfully');
-        const files = require(config.filesJSONPath);
-        files.push({
-          id: getUUID(),
-          name: file.filename,
-          size: statSync(join(config.uploadPath,  file.filename)).size
-        });
-        writeFileSync(config.filesJSONPath, JSON.stringify(files));
       });
     });
   };
