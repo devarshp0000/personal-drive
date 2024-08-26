@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./build-front-end')();
+require('./check-root-folder')();
 const express = require('express');
 const busboy = require('connect-busboy');
 const { resolve } = require('path');
@@ -28,7 +29,7 @@ app.listen(PORT, () => {
   console.log(`server started on url: http://localhost:${PORT}/`);
 });
 
-app.use(express.static(resolve(__dirname, '..', 'client', 'build')));
+app.use(express.static(resolve(__dirname, 'client')));
 app.get('*', (req, res) => {
-  res.sendFile(resolve(__dirname, '..', 'client', 'build', 'index.html'));
+  res.sendFile(resolve(__dirname, 'client', 'index.html'));
 });
